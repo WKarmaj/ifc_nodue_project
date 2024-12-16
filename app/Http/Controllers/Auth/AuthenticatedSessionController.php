@@ -36,6 +36,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('sso.homeboard');
         } elseif ($request->user()->usertype == 'concerned_person') {
             return redirect()->route('concerned_person.dashboard');
+        } elseif ($request->user()->usertype == 'librarian') {
+            return redirect()->route('librarian.search-dues');
         }
         
     }

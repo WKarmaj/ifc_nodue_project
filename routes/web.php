@@ -45,7 +45,10 @@ Route::middleware(['auth', 'role:concerned_person'])->group(function () {
 
 Route::get('/student-dues/{studentId}/', [KohaController::class, 'getStudentDues'])->name('admin.dues');
 
+Route::middleware(['auth', 'role:librarian'])->group(function() {
+        Route::get('/librarian/search-dues',[KohaController::class,'showSearchPage'])->name('librarian.search-dues');
+        Route::post('/librarian/search-dues', [KohaController::class, 'searchDues'])->name('librarian.search.dues.submit');
+});
 
 
-Route::get('/librarian/search-dues', [KohaController::class, 'showSearchPage'])->name('librarian.search.dues');
-Route::post('/librarian/search-dues', [KohaController::class, 'searchDues'])->name('librarian.search.dues.submit');
+
