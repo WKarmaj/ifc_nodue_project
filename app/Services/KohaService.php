@@ -12,42 +12,37 @@ class KohaService
 
     public function __construct()
     {
-        $this->kohaUrl = config('services.koha.base_url'); // Use environment variable for base URL
+        $this->kohaUrl = config('services.koha.base_url');
         $this->client = new Client([
-            'auth' => [config('services.koha.username'), config('services.koha.password')], // Use environment variables for credentials
+            'auth' => [config('services.koha.username'), config('services.koha.password')],
             'timeout' => 10.0,
         ]);
     }
 
     /**
-     * Fetch the due data for a patron from Koha.
+     * Fetch patron's checkout dues from Koha system.
      *
      * @param string $patronId
      * @return array
      */
     public function getPatronDues($patronId)
     {
-        $endpoint = "{$this->kohaUrl}/checkouts";
-    
+        $endpoint = "{$this->kohaUrl}/patrons"; // Replace with the actual Koha endpoint
         try {
             $response = $this->client->request('GET', $endpoint, [
                 'query' => ['patron_id' => $patronId],
             ]);
-    
+
             $data = json_decode($response->getBody()->getContents(), true);
-    
-            if (!is_array($data)) {
-                return ['error' => 'Invalid response from Koha API.'];
+
+            // Adjust response structure as needed
+            if (!isset($data['checkouts'])) {
+                return ['error' => 'No checkout data found for this student.'];
             }
-    
-            return $data;
+
+            return $data['checkouts']; // Assuming dues are in the `checkouts` field
         } catch (RequestException $e) {
-            $response = $e->getResponse();
-            if ($response && $response->getStatusCode() === 500) {
-                return ['error' => 'Koha API internal server error.'];
-            }
-            return ['error' => 'Unable to fetch data from Koha: ' . $e->getMessage()];
+            return ['error' => $e->getMessage()];
         }
     }
-    
 }

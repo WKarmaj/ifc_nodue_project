@@ -15,7 +15,7 @@ class KohaController extends Controller
     }
 
     /**
-     * Show the search page.
+     * Display the search page.
      */
     public function showSearchPage()
     {
@@ -23,7 +23,7 @@ class KohaController extends Controller
     }
 
     /**
-     * Handle the search request.
+     * Handle the search request and display dues.
      */
     public function searchDues(Request $request)
     {
@@ -35,10 +35,9 @@ class KohaController extends Controller
         $dues = $this->kohaService->getPatronDues($studentId);
 
         if (isset($dues['error'])) {
-            return back()->withErrors($dues['error'])->withInput();
+            return redirect()->back()->withErrors($dues['error'])->withInput();
         }
 
         return view('librarian.search-dues', ['dues' => $dues, 'studentId' => $studentId]);
     }
 }
-
